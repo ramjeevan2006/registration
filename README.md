@@ -10,3 +10,6 @@ openssl pkcs12 -export -in cert.pem -inkey key.pem -out yourfile.p12 -name youra
 
 openssl pkcs12 -info -in certificate.p12 -noout -passin pass:mypassword
 
+openssl pkcs12 -info -in certificate.p12 -noout -passin pass:mypassword
+
+
