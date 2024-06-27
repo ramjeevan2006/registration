@@ -32,4 +32,8 @@ After performing these steps, check the new .p12 file to ensure it contains the 
 
 openssl pkcs12 -info -in new_certificate.p12 -noout -passin pass:pocpwd
 
+To open .pfx
+openssl pkcs12 -info -in yourfile.pfx -noout -passin pass:yourpassword
+
+
 
