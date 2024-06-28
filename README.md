@@ -37,4 +37,13 @@ openssl pkcs12 -info -in yourfile.pfx -noout -passin pass:yourpassword
 
 export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-11.0.1.jdk/Contents/Home"
 export PATH="$JAVA_HOME/bin:$PATH"
+# Java environment
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-11.0.1.jdk/Contents/Home"
+
+# Maven environment
+export MAVEN_HOME="/opt/apache-maven-3.8.1"
+
+# Update PATH
+export PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH"
+
 
