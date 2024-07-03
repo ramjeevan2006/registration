@@ -46,4 +46,64 @@ export MAVEN_HOME="/opt/apache-maven-3.8.1"
 # Update PATH
 export PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH"
 
+# Compiled class files
+*.class
 
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# IntelliJ IDEA log directory
+idea.log
+
+# IntelliJ IDEA files
+*.iws
+*.iml
+*.ipr
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Gradle
+.gradle/
+build/
+
+# Other
+.settings/
+.classpath
+.project
+.tooling/
+
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata/
+
+# Windows
+Thumbs.db
+ehthumbs.db
