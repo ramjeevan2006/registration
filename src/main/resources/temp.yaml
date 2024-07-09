@@ -1,0 +1,244 @@
+openapi: 3.0.0
+info:
+  title: Fund of Funds Position API
+  version: 1.2.0
+servers:
+  - url: 'http://localhost:9090'
+    description: Position API Local Server
+  - url: 'https://inv-dev-ods-Entity-services.svcnp.CSIM.com'
+    description: Position API DEV Server
+  - url: 'https://inv-qa-ods-Entity-services.svcnp.CSIM.com'
+    description: Position API QA Server
+  - url: 'https://inv-uat-ods-Entity-services.svcnp.CSIM.com'
+    description: Position API UAT Server
+  - url: 'https://inv-ods-Entity-services.svcp.CSIM.com'
+    description: Position API Prod Server
+paths:
+  /lamda/positions/crossProduct/regulatory/fundofFunds/{asOfDate}:
+    get:
+      parameters:
+        - name: asOfDate
+          in: path
+          description: As Of Date of Position
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Authorization token
+          required: false
+          schema:
+            type: string
+        - name: achwab-resource-version
+          in: header
+          description: achwab Resource Version
+          required: false
+          schema:
+            type: string
+        - name: achwab-client-appid
+          in: header
+          description: achwab Client Application ID
+          required: false
+          schema:
+            type: string
+        - name: achwab-client-correlid
+          in: header
+          description: achwab Client Correlation ID
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: It will return cross Product Positions for IMR Fund Assets held under Client Accounts/Sleeves OR SIM Funds.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountCommon'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: A user with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /lamda/positions/crossProduct/regulatory/fundofFunds/strategyLevel/{entityId}/{asOfDate}:
+    get:
+      parameters:
+        - name: entityId
+          in: path
+          description: The ID of the Entity (Account / Sleeve / Fund)
+          required: true
+          schema:
+            type: string
+        - name: asOfDate
+          in: path
+          description: As Of Date of the Position
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Authorization token
+          required: false
+          schema:
+            type: string
+        - name: achwab-resource-version
+          in: header
+          description: achwab Resource Version
+          required: false
+          schema:
+            type: string
+        - name: achwab-client-appid
+          in: header
+          description: achwab Client Application ID
+          required: false
+          schema:
+            type: string
+        - name: achwab-client-correlid
+          in: header
+          description: achwab Client Correlation ID
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: It will return cross Product Positions for IMR Fund Assets held under Client Accounts/Sleeves or SIM Funds aggregated at Strategy Level.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountCommon'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: A user with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /lamda/positions/crossProduct/regulatory/fundofFunds/{entityId}/{asOfDate}:
+    get:
+      parameters:
+        - name: entityId
+          in: path
+          description: The ID of the Entity (Account / Sleeve / Fund)
+          required: true
+          schema:
+            type: string
+        - name: asOfDate
+          in: path
+          description: As Of Date of the Position
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Authorization token
+          required: false
+          schema:
+            type: string
+        - name: achwab-resource-version
+          in: header
+          description: achwab Resource Version
+          required: false
+          schema:
+            type: string
+        - name: achwab-client-appid
+          in: header
+          description: achwab Client Application ID
+          required: false
+          schema:
+            type: string
+        - name: achwab-client-correlid
+          in: header
+          description: achwab Client Correlation ID
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: It will return Account Position Snapshots for Fund of Funds for given Accounts.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountCommon'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: A user with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    AccountCommon:
+      type: object
+      properties:
+        accountId:
+          type: string
+        achwabsecurityId:
+          type: string
+        quantity:
+          type: number
+        dirtyMarketValueLocal:
+          type: number
+          format: int32
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        details:
+          type: string
