@@ -1,244 +1,193 @@
 openapi: 3.0.0
 info:
-  title: Fund of Funds Position API
-  version: 1.2.0
+  title: Account API
+  description: API for retrieving account information
+  version: 1.0.0
 servers:
-  - url: 'http://localhost:9090'
-    description: Position API Local Server
-  - url: 'https://inv-dev-ods-Entity-services.svcnp.CSIM.com'
-    description: Position API DEV Server
-  - url: 'https://inv-qa-ods-Entity-services.svcnp.CSIM.com'
-    description: Position API QA Server
-  - url: 'https://inv-uat-ods-Entity-services.svcnp.CSIM.com'
-    description: Position API UAT Server
-  - url: 'https://inv-ods-Entity-services.svcp.CSIM.com'
-    description: Position API Prod Server
+  - url: https://api.example.com/v1
 paths:
-  /lamda/positions/crossProduct/regulatory/fundofFunds/{asOfDate}:
+  /accounts:
     get:
+      summary: Retrieve a list of accounts
+      description: Retrieve a list of accounts with their positions and securities.
       parameters:
-        - name: asOfDate
-          in: path
-          description: As Of Date of Position
-          required: true
-          schema:
-            type: string
         - name: Authorization
           in: header
-          description: Authorization token
-          required: false
-          schema:
-            type: string
-        - name: achwab-resource-version
-          in: header
-          description: achwab Resource Version
-          required: false
-          schema:
-            type: string
-        - name: achwab-client-appid
-          in: header
-          description: achwab Client Application ID
-          required: false
-          schema:
-            type: string
-        - name: achwab-client-correlid
-          in: header
-          description: achwab Client Correlation ID
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: It will return cross Product Positions for IMR Fund Assets held under Client Accounts/Sleeves OR SIM Funds.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AccountCommon'
-        '401':
-          description: Authorization information is missing or invalid.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: A user with the specified ID was not found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Unexpected error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /lamda/positions/crossProduct/regulatory/fundofFunds/strategyLevel/{entityId}/{asOfDate}:
-    get:
-      parameters:
-        - name: entityId
-          in: path
-          description: The ID of the Entity (Account / Sleeve / Fund)
           required: true
+          description: Bearer token for authentication
+          schema:
+            type: string
+        - name: Schwab-Resource-Version
+          in: header
+          required: true
+          description: Version of the resource
+          schema:
+            type: string
+        - name: Schwab-Client-AppId
+          in: header
+          required: true
+          description: Client application ID
+          schema:
+            type: string
+        - name: Schwab-Client-CorrelId
+          in: header
+          required: true
+          description: Correlation ID for request tracking
           schema:
             type: string
         - name: asOfDate
-          in: path
-          description: As Of Date of the Position
-          required: true
-          schema:
-            type: string
-        - name: Authorization
-          in: header
-          description: Authorization token
+          in: query
           required: false
+          description: The date for which the account snapshot is requested.
           schema:
             type: string
-        - name: achwab-resource-version
-          in: header
-          description: achwab Resource Version
-          required: false
-          schema:
-            type: string
-        - name: achwab-client-appid
-          in: header
-          description: achwab Client Application ID
-          required: false
-          schema:
-            type: string
-        - name: achwab-client-correlid
-          in: header
-          description: achwab Client Correlation ID
-          required: false
-          schema:
-            type: string
+            format: date
       responses:
         '200':
-          description: It will return cross Product Positions for IMR Fund Assets held under Client Accounts/Sleeves or SIM Funds aggregated at Strategy Level.
+          description: A list of accounts
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AccountCommon'
+                type: object
+                properties:
+                  accounts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Account'
+              examples:
+                example-1:
+                  value:
+                    accounts:
+                      - accountId: "220"
+                        snapshotSourceCode: "ASDD"
+                        snapshotPointCode: "sod"
+                        snapshottreguenyode: "daily"
+                        restatementIndicator: false
+                        taxableIndicator: false
+                        asOfDate: "2024-07-10"
+                        effectiveDate: "2024-07-10"
+                        valuationDate: "2024-07-10"
+                        positions:
+                          - accountId: "string"
+                            schwabSecurityId: "string"
+                            quantity: 0
+                            dirtyMarketValueLocal: 0
+                            security:
+                              id: 0
+                              schwabsecurityId: "string"
+                              ticker: "string"
+                              cusip: "string"
+                              sharesOutstanding: 0
         '400':
-          description: Bad request.
+          description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                bad-request:
+                  value:
+                    error: "Bad Request"
+                    message: "The asOfDate parameter is invalid."
+                    status: 400
         '401':
-          description: Authorization information is missing or invalid.
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: A user with the specified ID was not found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  value:
+                    error: "Unauthorized"
+                    message: "The authentication token is missing or invalid."
+                    status: 401
         '500':
-          description: Unexpected error.
+          description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /lamda/positions/crossProduct/regulatory/fundofFunds/{entityId}/{asOfDate}:
-    get:
-      parameters:
-        - name: entityId
-          in: path
-          description: The ID of the Entity (Account / Sleeve / Fund)
-          required: true
-          schema:
-            type: string
-        - name: asOfDate
-          in: path
-          description: As Of Date of the Position
-          required: true
-          schema:
-            type: string
-        - name: Authorization
-          in: header
-          description: Authorization token
-          required: false
-          schema:
-            type: string
-        - name: achwab-resource-version
-          in: header
-          description: achwab Resource Version
-          required: false
-          schema:
-            type: string
-        - name: achwab-client-appid
-          in: header
-          description: achwab Client Application ID
-          required: false
-          schema:
-            type: string
-        - name: achwab-client-correlid
-          in: header
-          description: achwab Client Correlation ID
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: It will return Account Position Snapshots for Fund of Funds for given Accounts.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AccountCommon'
-        '400':
-          description: Bad request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Authorization information is missing or invalid.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: A user with the specified ID was not found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Unexpected error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                server-error:
+                  value:
+                    error: "Internal Server Error"
+                    message: "An unexpected error occurred on the server."
+                    status: 500
 components:
   schemas:
-    AccountCommon:
+    Account:
       type: object
       properties:
         accountId:
           type: string
-        achwabsecurityId:
+        snapshotSourceCode:
+          type: string
+        snapshotPointCode:
+          type: string
+        snapshottreguenyode:
+          type: string
+        restatementIndicator:
+          type: boolean
+        taxableIndicator:
+          type: boolean
+        asOfDate:
+          type: string
+          format: date
+        effectiveDate:
+          type: string
+          format: date
+        valuationDate:
+          type: string
+          format: date
+        positions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Position'
+    Position:
+      type: object
+      properties:
+        accountId:
+          type: string
+        schwabSecurityId:
           type: string
         quantity:
           type: number
+          format: double
         dirtyMarketValueLocal:
           type: number
+          format: double
+        security:
+          $ref: '#/components/schemas/Security'
+    Security:
+      type: object
+      properties:
+        id:
+          type: integer
           format: int32
+        schwabsecurityId:
+          type: string
+        ticker:
+          type: string
+        cusip:
+          type: string
+        sharesOutstanding:
+          type: number
+          format: double
     ErrorResponse:
       type: object
       properties:
-        code:
-          type: integer
-          format: int32
+        error:
+          type: string
         message:
           type: string
-        details:
-          type: string
+        status:
+          type: integer
+          format: int32
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
