@@ -1,5 +1,10 @@
 package com.some.ics.api.core.domain;
 
+import com.some.ics.core.security.authentication.oauth2.server.configure.web.ConcreteUserPrincipal;
+import com.some.ics.core.security.authentication.oauth2.server.configure.web.UserPrincipal;
+import com.some.ics.core.security.authentication.oauth2.server.configure.web.UserRole;
+import com.some.ics.core.security.authentication.oauth2.server.configure.web.UserClaim;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +27,16 @@ public class EntitlementMapper {
             }
         }).collect(Collectors.toList());
         
-        return new UserPrincipal(role, claims);
+        return new ConcreteUserPrincipal(role, claims);
+    }
+}
+package com.some.ics.core.security.authentication.oauth2.server.configure.web;
+
+import java.util.List;
+
+public class ConcreteUserPrincipal extends UserPrincipal {
+
+    public ConcreteUserPrincipal(UserRole role, List<UserClaim> claims) {
+        super(role, claims);
     }
 }
