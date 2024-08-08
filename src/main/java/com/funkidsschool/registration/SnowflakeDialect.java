@@ -3,124 +3,88 @@ package com.example.config;
 import org.hibernate.boot.model.TypeContributions;
 import org.hibernate.dialect.DatabaseVersion;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.function.StandardFunction;
-import org.hibernate.query.spi.QueryEngine;
+import org.hibernate.dialect.function.CommonFunctionFactory;
+import org.hibernate.dialect.function.FunctionContributor;
+import org.hibernate.query.sqm.function.SqmFunctionRegistry;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.SqlTypes;
-import org.hibernate.type.descriptor.sql.spi.SqlTypeDescriptorRegistry;
+import org.hibernate.type.descriptor.jdbc.JdbcTypeRegistry;
 
 public class SnowflakeDialect extends Dialect {
 
     public SnowflakeDialect() {
-        super(DatabaseVersion.make(1, 0)); // Set the version if necessary
+        super(DatabaseVersion.make(1, 0));
     }
 
     @Override
-    public void initializeFunctionRegistry(QueryEngine queryEngine) {
-        super.initializeFunctionRegistry(queryEngine);
-        queryEngine.getSqmFunctionRegistry().register(
-                "concat",
-                new StandardFunction("concat", SqlTypes.STRING)
-        );
-        queryEngine.getSqmFunctionRegistry().register(
-                "substring",
-                new StandardFunction("substring", SqlTypes.STRING)
-        );
-        queryEngine.getSqmFunctionRegistry().register(
-                "position",
-                new StandardFunction("position", SqlTypes.INTEGER)
-        );
-        queryEngine.getSqmFunctionRegistry().register(
-                "trim",
-                new StandardFunction("trim", SqlTypes.STRING)
-        );
-        queryEngine.getSqmFunctionRegistry().register(
-                "length",
-                new StandardFunction("length", SqlTypes.INTEGER)
-        );
-        queryEngine.getSqmFunctionRegistry().register(
-                "octet_length",
-                new StandardFunction("octet_length", SqlTypes.INTEGER)
-        );
-        queryEngine.getSqmFunctionRegistry().register(
-                "coalesce",
-                new StandardFunction("coalesce")
-        );
-        queryEngine.getSqmFunctionRegistry().register(
-                "nullif",
-                new StandardFunction("nullif")
-        );
-        queryEngine.getSqmFunctionRegistry().register(
-                "mod",
-                new StandardFunction("mod", SqlTypes.INTEGER)
-        );
-        queryEngine.getSqmFunctionRegistry().register(
-                "current_date",
-                new StandardFunction("current_date", SqlTypes.DATE)
-        );
-        queryEngine.getSqmFunctionRegistry().register(
-                "current_time",
-                new StandardFunction("current_time", SqlTypes.TIME)
-        );
-        queryEngine.getSqmFunctionRegistry().register(
-                "current_timestamp",
-                new StandardFunction("current_timestamp", SqlTypes.TIMESTAMP)
-        );
-        queryEngine.getSqmFunctionRegistry().register(
-                "to_varchar",
-                new StandardFunction("to_varchar", SqlTypes.STRING)
-        );
+    public void initializeFunctionRegistry(FunctionContributor functionContributor, SqmFunctionRegistry functionRegistry) {
+        super.initializeFunctionRegistry(functionContributor, functionRegistry);
+
+        // Registering common functions with Hibernate's CommonFunctionFactory
+        CommonFunctionFactory.concat(functionRegistry);
+        CommonFunctionFactory.substring(functionRegistry);
+        CommonFunctionFactory.position(functionRegistry);
+        CommonFunctionFactory.trim(functionRegistry);
+        CommonFunctionFactory.length(functionRegistry);
+        CommonFunctionFactory.octetLength(functionRegistry);
+        CommonFunctionFactory.coalesce(functionRegistry);
+        CommonFunctionFactory.nullif(functionRegistry);
+        CommonFunctionFactory.mod(functionRegistry);
+        CommonFunctionFactory.currentDate(functionRegistry);
+        CommonFunctionFactory.currentTime(functionRegistry);
+        CommonFunctionFactory.currentTimestamp(functionRegistry);
+        CommonFunctionFactory.str(functionRegistry);  // Equivalent of to_varchar in Snowflake
     }
 
     @Override
     public void initializeTypeContributions(TypeContributions typeContributions, ServiceRegistry serviceRegistry) {
         super.initializeTypeContributions(typeContributions, serviceRegistry);
-        SqlTypeDescriptorRegistry sqlTypeDescriptorRegistry = typeContributions.getSqlTypeDescriptorRegistry();
+        JdbcTypeRegistry jdbcTypeRegistry = typeContributions.getTypeConfiguration().getJdbcTypeRegistry();
 
         // Registering Snowflake-specific SQL types
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.BOOLEAN, "BOOLEAN");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.BIGINT, "NUMBER(19,0)");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.BINARY, "BINARY");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.BLOB, "BINARY");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.CHAR, "CHAR(1)");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.DATE, "DATE");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.DOUBLE, "DOUBLE");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.FLOAT, "FLOAT");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.INTEGER, "NUMBER(10,0)");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.NUMERIC, "NUMBER($p,$s)");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.TIME, "TIME");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.TIMESTAMP, "TIMESTAMP_LTZ");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.TINYINT, "NUMBER(3,0)");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.VARBINARY, "BINARY");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.VARCHAR, "VARCHAR($l)");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.LONGVARCHAR, "TEXT");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.CLOB, "TEXT");
-        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.DECIMAL, "NUMBER($p,$s)");
+        jdbcTypeRegistry.addDescriptor(SqlTypes.BOOLEAN, jdbcTypeRegistry.getDescriptor(SqlTypes.BOOLEAN));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.BIGINT, jdbcTypeRegistry.getDescriptor(SqlTypes.NUMERIC));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.BINARY, jdbcTypeRegistry.getDescriptor(SqlTypes.BINARY));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.BLOB, jdbcTypeRegistry.getDescriptor(SqlTypes.BLOB));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.CHAR, jdbcTypeRegistry.getDescriptor(SqlTypes.CHAR));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.DATE, jdbcTypeRegistry.getDescriptor(SqlTypes.DATE));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.DOUBLE, jdbcTypeRegistry.getDescriptor(SqlTypes.DOUBLE));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.FLOAT, jdbcTypeRegistry.getDescriptor(SqlTypes.FLOAT));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.INTEGER, jdbcTypeRegistry.getDescriptor(SqlTypes.INTEGER));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.NUMERIC, jdbcTypeRegistry.getDescriptor(SqlTypes.NUMERIC));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.TIME, jdbcTypeRegistry.getDescriptor(SqlTypes.TIME));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.TIMESTAMP, jdbcTypeRegistry.getDescriptor(SqlTypes.TIMESTAMP));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.TINYINT, jdbcTypeRegistry.getDescriptor(SqlTypes.TINYINT));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.VARBINARY, jdbcTypeRegistry.getDescriptor(SqlTypes.VARBINARY));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.VARCHAR, jdbcTypeRegistry.getDescriptor(SqlTypes.VARCHAR));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.LONGVARCHAR, jdbcTypeRegistry.getDescriptor(SqlTypes.LONGVARCHAR));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.CLOB, jdbcTypeRegistry.getDescriptor(SqlTypes.CLOB));
+        jdbcTypeRegistry.addDescriptor(SqlTypes.DECIMAL, jdbcTypeRegistry.getDescriptor(SqlTypes.DECIMAL));
     }
 
     @Override
     public boolean dropConstraints() {
-        return false; // Snowflake does not support dropping constraints separately from dropping tables
+        return false;
     }
 
     @Override
     public boolean hasAlterTable() {
-        return false; // Snowflake does not support ALTER TABLE for modifying columns in the same way as other databases
+        return false;
     }
 
     @Override
     public boolean qualifyIndexName() {
-        return false; // Snowflake does not require qualifying index names with table names
+        return false;
     }
 
     @Override
     public boolean supportsSequences() {
-        return false; // Snowflake does not support sequences
+        return false;
     }
 
     @Override
     public String getIdentityColumnString() {
-        return "not null"; // Identity columns are managed differently in Snowflake
+        return "not null";
     }
 
     @Override
@@ -130,7 +94,7 @@ public class SnowflakeDialect extends Dialect {
 
     @Override
     public boolean supportsLimit() {
-        return true; // Snowflake supports LIMIT and OFFSET for pagination
+        return true;
     }
 
     @Override
@@ -140,22 +104,22 @@ public class SnowflakeDialect extends Dialect {
 
     @Override
     public boolean supportsIfExistsBeforeTableName() {
-        return true; // Snowflake supports "IF EXISTS" syntax before table names
+        return true;
     }
 
     @Override
     public boolean supportsIfExistsAfterTableName() {
-        return true; // Snowflake supports "IF EXISTS" syntax after table names
+        return true;
     }
 
     @Override
     public boolean supportsUnionAll() {
-        return true; // Snowflake supports UNION ALL
+        return true;
     }
 
     @Override
     public boolean supportsTemporaryTables() {
-        return true; // Snowflake supports temporary tables
+        return true;
     }
 
     @Override
