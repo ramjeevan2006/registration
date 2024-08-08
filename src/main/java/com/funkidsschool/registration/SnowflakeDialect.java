@@ -1,52 +1,53 @@
 package com.example.config;
 
 import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.function.StandardSQLFunction;
-import org.hibernate.dialect.function.SQLFunctionTemplate;
-import org.hibernate.dialect.function.VarArgsSQLFunction;
+import org.hibernate.dialect.DatabaseVersion;
+import org.hibernate.dialect.function.SqlFunction;
+import org.hibernate.dialect.function.CastFunction;
+import org.hibernate.type.SqlTypes;
 import org.hibernate.type.StandardBasicTypes;
 
-import java.sql.Types;
+import java.util.Map;
 
 public class SnowflakeDialect extends Dialect {
 
     public SnowflakeDialect() {
-        super();
+        super(DatabaseVersion.make(1, 0));  // Specify the version if necessary
 
         // Registering Snowflake-specific column types
-        registerColumnType(Types.BOOLEAN, "BOOLEAN");
-        registerColumnType(Types.BIGINT, "NUMBER(19,0)");
-        registerColumnType(Types.BINARY, "BINARY");
-        registerColumnType(Types.BLOB, "BINARY");
-        registerColumnType(Types.CHAR, "CHAR(1)");
-        registerColumnType(Types.DATE, "DATE");
-        registerColumnType(Types.DOUBLE, "DOUBLE");
-        registerColumnType(Types.FLOAT, "FLOAT");
-        registerColumnType(Types.INTEGER, "NUMBER(10,0)");
-        registerColumnType(Types.NUMERIC, "NUMBER($p,$s)");
-        registerColumnType(Types.TIME, "TIME");
-        registerColumnType(Types.TIMESTAMP, "TIMESTAMP_LTZ");  // Snowflake uses TIMESTAMP_LTZ for time zones
-        registerColumnType(Types.TINYINT, "NUMBER(3,0)");
-        registerColumnType(Types.VARBINARY, "BINARY");
-        registerColumnType(Types.VARCHAR, "VARCHAR($l)");
-        registerColumnType(Types.LONGVARCHAR, "TEXT");
-        registerColumnType(Types.CLOB, "TEXT");
-        registerColumnType(Types.DECIMAL, "NUMBER($p,$s)");
+        registerColumnType(SqlTypes.BOOLEAN, "BOOLEAN");
+        registerColumnType(SqlTypes.BIGINT, "NUMBER(19,0)");
+        registerColumnType(SqlTypes.BINARY, "BINARY");
+        registerColumnType(SqlTypes.BLOB, "BINARY");
+        registerColumnType(SqlTypes.CHAR, "CHAR(1)");
+        registerColumnType(SqlTypes.DATE, "DATE");
+        registerColumnType(SqlTypes.DOUBLE, "DOUBLE");
+        registerColumnType(SqlTypes.FLOAT, "FLOAT");
+        registerColumnType(SqlTypes.INTEGER, "NUMBER(10,0)");
+        registerColumnType(SqlTypes.NUMERIC, "NUMBER($p,$s)");
+        registerColumnType(SqlTypes.TIME, "TIME");
+        registerColumnType(SqlTypes.TIMESTAMP, "TIMESTAMP_LTZ");
+        registerColumnType(SqlTypes.TINYINT, "NUMBER(3,0)");
+        registerColumnType(SqlTypes.VARBINARY, "BINARY");
+        registerColumnType(SqlTypes.VARCHAR, "VARCHAR($l)");
+        registerColumnType(SqlTypes.LONGVARCHAR, "TEXT");
+        registerColumnType(SqlTypes.CLOB, "TEXT");
+        registerColumnType(SqlTypes.DECIMAL, "NUMBER($p,$s)");
 
-        // Registering Snowflake SQL functions
-        registerFunction("concat", new VarArgsSQLFunction(StandardBasicTypes.STRING, "", "||", ""));
-        registerFunction("substring", new StandardSQLFunction("substring", StandardBasicTypes.STRING));
-        registerFunction("locate", new StandardSQLFunction("position", StandardBasicTypes.INTEGER));  // Snowflake uses POSITION instead of LOCATE
-        registerFunction("trim", new SQLFunctionTemplate(StandardBasicTypes.STRING, "trim(?1)"));
-        registerFunction("length", new StandardSQLFunction("length", StandardBasicTypes.INTEGER));
-        registerFunction("bit_length", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "octet_length(?1) * 8"));  // Snowflake uses OCTET_LENGTH
-        registerFunction("coalesce", new StandardSQLFunction("coalesce"));
-        registerFunction("nullif", new StandardSQLFunction("nullif"));
-        registerFunction("mod", new StandardSQLFunction("mod", StandardBasicTypes.INTEGER));
-        registerFunction("current_date", new StandardSQLFunction("current_date", StandardBasicTypes.DATE));
-        registerFunction("current_time", new StandardSQLFunction("current_time", StandardBasicTypes.TIME));
-        registerFunction("current_timestamp", new StandardSQLFunction("current_timestamp", StandardBasicTypes.TIMESTAMP));
-        registerFunction("str", new StandardSQLFunction("to_varchar", StandardBasicTypes.STRING));  // Snowflake uses TO_VARCHAR for string conversion
+        // Registering SQL functions
+        registerFunction("concat", new SqlFunction("concat", StandardBasicTypes.STRING));
+        registerFunction("substring", new SqlFunction("substring", StandardBasicTypes.STRING));
+        registerFunction("position", new SqlFunction("position", StandardBasicTypes.INTEGER));
+        registerFunction("trim", new SqlFunction("trim", StandardBasicTypes.STRING));
+        registerFunction("length", new SqlFunction("length", StandardBasicTypes.INTEGER));
+        registerFunction("octet_length", new SqlFunction("octet_length", StandardBasicTypes.INTEGER));
+        registerFunction("coalesce", new SqlFunction("coalesce"));
+        registerFunction("nullif", new SqlFunction("nullif"));
+        registerFunction("mod", new SqlFunction("mod", StandardBasicTypes.INTEGER));
+        registerFunction("current_date", new SqlFunction("current_date", StandardBasicTypes.DATE));
+        registerFunction("current_time", new SqlFunction("current_time", StandardBasicTypes.TIME));
+        registerFunction("current_timestamp", new SqlFunction("current_timestamp", StandardBasicTypes.TIMESTAMP));
+        registerFunction("to_varchar", new SqlFunction("to_varchar", StandardBasicTypes.STRING));
     }
 
     // Snowflake does not support dropping constraints separately from dropping tables
@@ -55,28 +56,24 @@ public class SnowflakeDialect extends Dialect {
         return false;
     }
 
-    // Snowflake does not support ALTER TABLE for modifying columns in the same way as other databases
     @Override
     public boolean hasAlterTable() {
         return false;
     }
 
-    // Snowflake does not require qualifying index names with table names
     @Override
     public boolean qualifyIndexName() {
         return false;
     }
 
-    // Snowflake does not support sequences
     @Override
     public boolean supportsSequences() {
         return false;
     }
 
-    // Snowflake does not support identity columns as other databases do
     @Override
     public String getIdentityColumnString() {
-        return "not null";  // Identity columns are managed differently in Snowflake
+        return "not null";
     }
 
     @Override
@@ -84,7 +81,6 @@ public class SnowflakeDialect extends Dialect {
         return "select last_value from identifier('_identity')";
     }
 
-    // Snowflake supports LIMIT and OFFSET for pagination
     @Override
     public boolean supportsLimit() {
         return true;
@@ -95,7 +91,6 @@ public class SnowflakeDialect extends Dialect {
         return sql + (hasOffset ? " limit ? offset ?" : " limit ?");
     }
 
-    // Snowflake supports "IF EXISTS" syntax before and after table names
     @Override
     public boolean supportsIfExistsBeforeTableName() {
         return true;
@@ -106,13 +101,11 @@ public class SnowflakeDialect extends Dialect {
         return true;
     }
 
-    // Snowflake supports UNION ALL
     @Override
     public boolean supportsUnionAll() {
         return true;
     }
 
-    // Snowflake supports temporary tables
     @Override
     public boolean supportsTemporaryTables() {
         return true;
@@ -128,7 +121,6 @@ public class SnowflakeDialect extends Dialect {
         return true;
     }
 
-    // Snowflake uses CURRENT_TIMESTAMP for getting the current time
     @Override
     public String getCurrentTimestampSelectString() {
         return "select current_timestamp()";
@@ -142,5 +134,10 @@ public class SnowflakeDialect extends Dialect {
     @Override
     public boolean isCurrentTimestampSelectStringCallable() {
         return false;
+    }
+
+    @Override
+    public Map<String, SqlFunction> getFunctions() {
+        return super.getFunctions();  // Return registered functions
     }
 }
