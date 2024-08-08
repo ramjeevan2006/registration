@@ -24,6 +24,9 @@ public class DataSourceConfig {
     @Value("${spring.datasource.username}")
     private String username;
 
+    @Value("${spring.datasource.driver-class-name}")
+    private String driverClassName;
+
     @Value("classpath:${spring.datasource.private-key-file}")
     private Resource privateKeyFile;
 
@@ -33,9 +36,18 @@ public class DataSourceConfig {
     @Bean
     public DataSource dataSource() throws IOException, GeneralSecurityException {
         String privateKeyContent = new String(Files.readAllBytes(privateKeyFile.getFile().toPath()));
-        String passphrase = new String(Files.readAllBytes(passphraseFile.getFile().toPath())).trim();
+        System.out.println("Raw Private Key Content: " + privateKeyContent); // Debugging statement
+        privateKeyContent = privateKeyContent
+                .replace("-----BEGIN PRIVATE KEY-----", "")
+                .replace("-----END PRIVATE KEY-----", "")
+                .replaceAll("\\s", ""); // Remove all whitespace characters
 
-        // Load private key
+        System.out.println("Processed Private Key Content: " + privateKeyContent); // Debugging statement
+
+        String passphrase = new String(Files.readAllBytes(passphraseFile.getFile().toPath())).trim();
+        System.out.println("Passphrase: " + passphrase); // Debugging statement
+
+        // Decode the private key
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyContent));
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
@@ -47,6 +59,7 @@ public class DataSourceConfig {
         properties.put("passphrase", passphrase);
 
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(driverClassName);
         dataSource.setUrl(url);
         dataSource.setConnectionProperties(properties);
 
