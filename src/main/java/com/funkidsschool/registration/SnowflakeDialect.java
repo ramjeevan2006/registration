@@ -1,79 +1,126 @@
 package com.example.config;
 
-import org.hibernate.dialect.Dialect;
+import org.hibernate.boot.model.TypeContributions;
 import org.hibernate.dialect.DatabaseVersion;
-import org.hibernate.dialect.function.SqlFunction;
-import org.hibernate.dialect.function.CastFunction;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.function.StandardFunction;
+import org.hibernate.query.spi.QueryEngine;
+import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.SqlTypes;
-import org.hibernate.type.StandardBasicTypes;
-
-import java.util.Map;
+import org.hibernate.type.descriptor.sql.spi.SqlTypeDescriptorRegistry;
 
 public class SnowflakeDialect extends Dialect {
 
     public SnowflakeDialect() {
-        super(DatabaseVersion.make(1, 0));  // Specify the version if necessary
-
-        // Registering Snowflake-specific column types
-        registerColumnType(SqlTypes.BOOLEAN, "BOOLEAN");
-        registerColumnType(SqlTypes.BIGINT, "NUMBER(19,0)");
-        registerColumnType(SqlTypes.BINARY, "BINARY");
-        registerColumnType(SqlTypes.BLOB, "BINARY");
-        registerColumnType(SqlTypes.CHAR, "CHAR(1)");
-        registerColumnType(SqlTypes.DATE, "DATE");
-        registerColumnType(SqlTypes.DOUBLE, "DOUBLE");
-        registerColumnType(SqlTypes.FLOAT, "FLOAT");
-        registerColumnType(SqlTypes.INTEGER, "NUMBER(10,0)");
-        registerColumnType(SqlTypes.NUMERIC, "NUMBER($p,$s)");
-        registerColumnType(SqlTypes.TIME, "TIME");
-        registerColumnType(SqlTypes.TIMESTAMP, "TIMESTAMP_LTZ");
-        registerColumnType(SqlTypes.TINYINT, "NUMBER(3,0)");
-        registerColumnType(SqlTypes.VARBINARY, "BINARY");
-        registerColumnType(SqlTypes.VARCHAR, "VARCHAR($l)");
-        registerColumnType(SqlTypes.LONGVARCHAR, "TEXT");
-        registerColumnType(SqlTypes.CLOB, "TEXT");
-        registerColumnType(SqlTypes.DECIMAL, "NUMBER($p,$s)");
-
-        // Registering SQL functions
-        registerFunction("concat", new SqlFunction("concat", StandardBasicTypes.STRING));
-        registerFunction("substring", new SqlFunction("substring", StandardBasicTypes.STRING));
-        registerFunction("position", new SqlFunction("position", StandardBasicTypes.INTEGER));
-        registerFunction("trim", new SqlFunction("trim", StandardBasicTypes.STRING));
-        registerFunction("length", new SqlFunction("length", StandardBasicTypes.INTEGER));
-        registerFunction("octet_length", new SqlFunction("octet_length", StandardBasicTypes.INTEGER));
-        registerFunction("coalesce", new SqlFunction("coalesce"));
-        registerFunction("nullif", new SqlFunction("nullif"));
-        registerFunction("mod", new SqlFunction("mod", StandardBasicTypes.INTEGER));
-        registerFunction("current_date", new SqlFunction("current_date", StandardBasicTypes.DATE));
-        registerFunction("current_time", new SqlFunction("current_time", StandardBasicTypes.TIME));
-        registerFunction("current_timestamp", new SqlFunction("current_timestamp", StandardBasicTypes.TIMESTAMP));
-        registerFunction("to_varchar", new SqlFunction("to_varchar", StandardBasicTypes.STRING));
+        super(DatabaseVersion.make(1, 0)); // Set the version if necessary
     }
 
-    // Snowflake does not support dropping constraints separately from dropping tables
+    @Override
+    public void initializeFunctionRegistry(QueryEngine queryEngine) {
+        super.initializeFunctionRegistry(queryEngine);
+        queryEngine.getSqmFunctionRegistry().register(
+                "concat",
+                new StandardFunction("concat", SqlTypes.STRING)
+        );
+        queryEngine.getSqmFunctionRegistry().register(
+                "substring",
+                new StandardFunction("substring", SqlTypes.STRING)
+        );
+        queryEngine.getSqmFunctionRegistry().register(
+                "position",
+                new StandardFunction("position", SqlTypes.INTEGER)
+        );
+        queryEngine.getSqmFunctionRegistry().register(
+                "trim",
+                new StandardFunction("trim", SqlTypes.STRING)
+        );
+        queryEngine.getSqmFunctionRegistry().register(
+                "length",
+                new StandardFunction("length", SqlTypes.INTEGER)
+        );
+        queryEngine.getSqmFunctionRegistry().register(
+                "octet_length",
+                new StandardFunction("octet_length", SqlTypes.INTEGER)
+        );
+        queryEngine.getSqmFunctionRegistry().register(
+                "coalesce",
+                new StandardFunction("coalesce")
+        );
+        queryEngine.getSqmFunctionRegistry().register(
+                "nullif",
+                new StandardFunction("nullif")
+        );
+        queryEngine.getSqmFunctionRegistry().register(
+                "mod",
+                new StandardFunction("mod", SqlTypes.INTEGER)
+        );
+        queryEngine.getSqmFunctionRegistry().register(
+                "current_date",
+                new StandardFunction("current_date", SqlTypes.DATE)
+        );
+        queryEngine.getSqmFunctionRegistry().register(
+                "current_time",
+                new StandardFunction("current_time", SqlTypes.TIME)
+        );
+        queryEngine.getSqmFunctionRegistry().register(
+                "current_timestamp",
+                new StandardFunction("current_timestamp", SqlTypes.TIMESTAMP)
+        );
+        queryEngine.getSqmFunctionRegistry().register(
+                "to_varchar",
+                new StandardFunction("to_varchar", SqlTypes.STRING)
+        );
+    }
+
+    @Override
+    public void initializeTypeContributions(TypeContributions typeContributions, ServiceRegistry serviceRegistry) {
+        super.initializeTypeContributions(typeContributions, serviceRegistry);
+        SqlTypeDescriptorRegistry sqlTypeDescriptorRegistry = typeContributions.getSqlTypeDescriptorRegistry();
+
+        // Registering Snowflake-specific SQL types
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.BOOLEAN, "BOOLEAN");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.BIGINT, "NUMBER(19,0)");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.BINARY, "BINARY");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.BLOB, "BINARY");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.CHAR, "CHAR(1)");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.DATE, "DATE");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.DOUBLE, "DOUBLE");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.FLOAT, "FLOAT");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.INTEGER, "NUMBER(10,0)");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.NUMERIC, "NUMBER($p,$s)");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.TIME, "TIME");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.TIMESTAMP, "TIMESTAMP_LTZ");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.TINYINT, "NUMBER(3,0)");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.VARBINARY, "BINARY");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.VARCHAR, "VARCHAR($l)");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.LONGVARCHAR, "TEXT");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.CLOB, "TEXT");
+        sqlTypeDescriptorRegistry.addDescriptor(SqlTypes.DECIMAL, "NUMBER($p,$s)");
+    }
+
     @Override
     public boolean dropConstraints() {
-        return false;
+        return false; // Snowflake does not support dropping constraints separately from dropping tables
     }
 
     @Override
     public boolean hasAlterTable() {
-        return false;
+        return false; // Snowflake does not support ALTER TABLE for modifying columns in the same way as other databases
     }
 
     @Override
     public boolean qualifyIndexName() {
-        return false;
+        return false; // Snowflake does not require qualifying index names with table names
     }
 
     @Override
     public boolean supportsSequences() {
-        return false;
+        return false; // Snowflake does not support sequences
     }
 
     @Override
     public String getIdentityColumnString() {
-        return "not null";
+        return "not null"; // Identity columns are managed differently in Snowflake
     }
 
     @Override
@@ -83,7 +130,7 @@ public class SnowflakeDialect extends Dialect {
 
     @Override
     public boolean supportsLimit() {
-        return true;
+        return true; // Snowflake supports LIMIT and OFFSET for pagination
     }
 
     @Override
@@ -93,22 +140,22 @@ public class SnowflakeDialect extends Dialect {
 
     @Override
     public boolean supportsIfExistsBeforeTableName() {
-        return true;
+        return true; // Snowflake supports "IF EXISTS" syntax before table names
     }
 
     @Override
     public boolean supportsIfExistsAfterTableName() {
-        return true;
+        return true; // Snowflake supports "IF EXISTS" syntax after table names
     }
 
     @Override
     public boolean supportsUnionAll() {
-        return true;
+        return true; // Snowflake supports UNION ALL
     }
 
     @Override
     public boolean supportsTemporaryTables() {
-        return true;
+        return true; // Snowflake supports temporary tables
     }
 
     @Override
@@ -134,10 +181,5 @@ public class SnowflakeDialect extends Dialect {
     @Override
     public boolean isCurrentTimestampSelectStringCallable() {
         return false;
-    }
-
-    @Override
-    public Map<String, SqlFunction> getFunctions() {
-        return super.getFunctions();  // Return registered functions
     }
 }
