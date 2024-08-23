@@ -1,0 +1,33 @@
+INSERT INTO credit_card_amp_accessrole (role_id, role_name, role_description, role_abbreviation)
+VALUES 
+(1, 'Admin', 'Administrator Role', 'ADM'),
+(2, 'User', 'User Role', 'USR'),
+(3, 'Viewer', 'Viewer Role', 'VWR');
+
+
+INSERT INTO credit_card_amp_entitlement (entitlement_id, channel_entitlement_id, entitlement_name, entitlement_description, channel_name, request_type)
+VALUES 
+(1, 'CHANNEL_001', 'Read Access', 'Access to read data', 'Online Channel', 'GET'),
+(2, 'CHANNEL_002', 'Write Access', 'Access to write data', 'Mobile Channel', 'POST'),
+(3, 'CHANNEL_003', 'Admin Access', 'Admin level access', 'Admin Channel', 'ALL');
+
+
+INSERT INTO credit_card_amp_policy (policy_id, bu_partner_id, access_role_id, policy_name, policy_description, policy_abbreviation)
+VALUES 
+(1, 1, 1, 'Default Admin Policy', 'Policy for administrators', 'ADM_POL'),
+(2, 2, 2, 'Default User Policy', 'Policy for users', 'USR_POL'),
+(3, 3, 3, 'Default Viewer Policy', 'Policy for viewers', 'VWR_POL');
+
+
+INSERT INTO credit_card_amp_accessrole_entitlement (entitlement_id, role_id)
+VALUES 
+(1, 1),
+(2, 2),
+(3, 3);
+
+
+INSERT INTO credit_card_amp_policy_entitlement (entitlement_id, policy_id)
+VALUES 
+(1, 1),
+(2, 2),
+(3, 3);
