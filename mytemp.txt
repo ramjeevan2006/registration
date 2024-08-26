@@ -17,24 +17,20 @@ SELECT
             'quantity', position.quantity,
             'dirtyMarketValueLocal', position.dirty_market_value_local,
             'security', OBJECT_CONSTRUCT(
-                'id', security.id,
-                'schwabSecurityId', security.schwab_security_id,
-                'ticker', security.ticker,
-                'cusip', security.cusip,
-                'sharesOutstanding', security.shares_outstanding
+                'id', position.security_id,  -- Adjust this if security ID field is named differently
+                'schwabSecurityId', position.schwab_security_id,
+                'ticker', position.ticker,  -- Adjust this if ticker field is named differently
+                'cusip', position.cusip,  -- Adjust this if CUSIP field is named differently
+                'sharesOutstanding', position.shares_outstanding  -- Adjust this if shares outstanding field is named differently
             )
         )
     ) AS positions
 FROM
-    vw_samda_sod_position_current AS snapshot
+    VW_SAMDA_SOD_POSITION AS snapshot
 JOIN
-    vw_samda_sod_position_current AS position
+    VW_SAMDA_SOD_POSITION AS position
 ON
     snapshot.position_snapshot_key = position.position_snapshot_key
-JOIN
-    security_table AS security
-ON
-    position.schwab_security_id = security.schwab_security_id
 GROUP BY
     snapshot.entity_id,
     snapshot.snapshot_source_code,
