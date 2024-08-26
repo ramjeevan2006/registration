@@ -11,19 +11,19 @@ SELECT
     snapshot.valuation_date,
     snapshot.position_snapshot_key,
     ARRAY_AGG(
-        JSON_BUILD_OBJECT(
+        OBJECT_CONSTRUCT(
             'entityId', position.entity_id,
             'schwabSecurityId', position.schwab_security_id,
             'quantity', position.quantity,
             'dirtyMarketValueLocal', position.dirty_market_value_local,
-            'security', JSON_BUILD_OBJECT(
+            'security', OBJECT_CONSTRUCT(
                 'id', security.id,
                 'schwabSecurityId', security.schwab_security_id,
                 'ticker', security.ticker,
                 'cusip', security.cusip,
                 'sharesOutstanding', security.shares_outstanding
             )
-        ) ORDER BY position.entity_id
+        )
     ) AS positions
 FROM
     vw_samda_sod_position_current AS snapshot
