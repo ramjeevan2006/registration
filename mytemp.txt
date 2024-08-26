@@ -1,0 +1,49 @@
+SELECT
+    snapshot.entity_id,
+    snapshot.snapshot_source_code,
+    snapshot.snapshot_point_code,
+    snapshot.snapshot_type_code,
+    snapshot.snapshot_frequency_code,
+    snapshot.restatement_indicator,
+    snapshot.taxable_indicator,
+    snapshot.asof_date,
+    snapshot.effective_date,
+    snapshot.valuation_date,
+    snapshot.position_snapshot_key,
+    ARRAY_AGG(
+        JSON_BUILD_OBJECT(
+            'entityId', position.entity_id,
+            'schwabSecurityId', position.schwab_security_id,
+            'quantity', position.quantity,
+            'dirtyMarketValueLocal', position.dirty_market_value_local,
+            'security', JSON_BUILD_OBJECT(
+                'id', security.id,
+                'schwabSecurityId', security.schwab_security_id,
+                'ticker', security.ticker,
+                'cusip', security.cusip,
+                'sharesOutstanding', security.shares_outstanding
+            )
+        ) ORDER BY position.entity_id
+    ) AS positions
+FROM
+    vw_samda_sod_position_current AS snapshot
+JOIN
+    vw_samda_sod_position_current AS position
+ON
+    snapshot.position_snapshot_key = position.position_snapshot_key
+JOIN
+    security_table AS security
+ON
+    position.schwab_security_id = security.schwab_security_id
+GROUP BY
+    snapshot.entity_id,
+    snapshot.snapshot_source_code,
+    snapshot.snapshot_point_code,
+    snapshot.snapshot_type_code,
+    snapshot.snapshot_frequency_code,
+    snapshot.restatement_indicator,
+    snapshot.taxable_indicator,
+    snapshot.asof_date,
+    snapshot.effective_date,
+    snapshot.valuation_date,
+    snapshot.position_snapshot_key;
