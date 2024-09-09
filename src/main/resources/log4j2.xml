@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration name="ConfigTest" status="ERROR" monitorInterval="5">
+<Configuration name="HibernateConfig" status="WARN" monitorInterval="5">
     <Appenders>
-        <Console name="Out" target="SYSTEM_OUT">
+        <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
     </Appenders>
 
     <Loggers>
         <Logger name="net.snowflake.hibernate.dialect" level="TRACE" additivity="false">
-            <AppenderRef ref="Out"/>
+            <AppenderRef ref="Console"/>
         </Logger>
         <Logger name="org.hibernate.SQL" level="OFF" additivity="false">
-            <AppenderRef ref="Out"/>
+            <AppenderRef ref="Console"/>
         </Logger>
         <Logger name="org.hibernate.orm.jdbc.bind" level="OFF" additivity="false">
-            <AppenderRef ref="Out"/>
+            <AppenderRef ref="Console"/>
         </Logger>
         <Logger name="org.hibernate.orm.jdbc.extract" level="OFF" additivity="false">
-            <AppenderRef ref="Out"/>
+            <AppenderRef ref="Console"/>
         </Logger>
 
         <Root level="WARN">
-            <AppenderRef ref="Out"/>
+            <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
 </Configuration>
