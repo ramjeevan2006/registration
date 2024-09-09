@@ -31,3 +31,6 @@ VALUES
 (1, 1),
 (2, 2),
 (3, 3);
+
+ENTRYPOINT ["java","-jar","/app/your-spring-boot-app.jar"]
+
