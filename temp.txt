@@ -34,3 +34,19 @@ VALUES
 
 ENTRYPOINT ["java","-jar","/app/your-spring-boot-app.jar"]
 
+
+CREATE TABLE security (
+    cusip STRING PRIMARY KEY,
+    ticker STRING,
+    strategy_source STRING,
+    as_of_date DATE,
+    shares_quantity NUMBER(18,2),
+    shares_outstanding NUMBER(18,2),
+    market_value NUMBER(18,2)
+);
+INSERT INTO security (cusip, ticker, strategy_source, as_of_date, shares_quantity, shares_outstanding, market_value)
+VALUES 
+('123456789', 'AAPL', 'CSIM MFs', '2024-06-05', 500000.00, 1000000.00, 1500000.50),
+('987654321', 'MSFT', 'CSIM MFs', '2024-06-05', 750000.00, 2000000.00, 2500000.75);
+
+
