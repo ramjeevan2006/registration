@@ -36,8 +36,9 @@ public class HibernateConfig {
         settings.put("hibernate.dialect.snowflake.development_mode", "false");
         settings.put(Environment.DRIVER, "net.snowflake.client.jdbc.SnowflakeDriver");
         settings.put(Environment.URL, driverConnectionString);
-        settings.put(Environment.USER, System.getenv("SNOWFLAKE_USER"));
-        settings.put(Environment.PASS, System.getenv("SNOWFLAKE_PASSWORD"));
+  settings.put("hibernate.connection.username", "SVC_SNOW_DATA_API_USER");
+        settings.put("hibernate.connection.private_key", privateKey);
+        settings.put("hibernate.connection.private_key_passphrase", passphrase);
         settings.put(Environment.SHOW_SQL, "false");
         settings.put(Environment.FORMAT_SQL, "false");
         settings.put("hibernate.highlight_sql", "true");
