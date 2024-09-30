@@ -48,5 +48,7 @@ INSERT INTO security (cusip, ticker, strategy_source, as_of_date, shares_quantit
 VALUES 
 ('123456789', 'AAPL', 'CSIM MFs', '2024-06-05', 500000.00, 1000000.00, 1500000.50),
 ('987654321', 'MSFT', 'CSIM MFs', '2024-06-05', 750000.00, 2000000.00, 2500000.75);
+management.endpoints.web.exposure.include=health
+management.endpoint.health.show-details=always
 
 
