@@ -51,39 +51,142 @@ VALUES
 management.endpoints.web.exposure.include=health
 management.endpoint.health.show-details=always
 
-{
-    "eventMetadata": {
-        "eventId": "12345",
-        "eventType": "ADDRESS_CHANGE",
-        "eventDescription": "Address change event",
-        "eventPublishedTimestamp": "2024-10-01T10:15:30",
-        "eventOccurredTimestamp": "2024-10-01T10:10:30",
-        "operationType": "CREATE"
-    },
-    "eventInformation": {
-        "crdhldrAddressAndTreatment": {
-            "chadrChitlNumber": "CH123",
-            "chadrTypeCode": "HOME",
-            "chadrAddress1Text": "123 Main St",
-            "chadrAddress2Text": "Apt 4B",
-            "chadrCityName": "Austin",
-            "chadrStateName": "TX",
-            "chadrZIP4Code": "78701",
-            "chadrCountryCode": "US",
-            "chadrLastMaintenanceTms": "2024-10-01T08:15:30", 
-            "chadrInternalBlockCode": "01",
-            "chadrFraudBlockCode": "00",
-            "cadrCustomerRequestCode": "REQ001",
-            "cadrStateConfidentialityCode": "CONF123",
-            "cadrInternalBlockCode": "BLOCK01",
-            "cadrAddressComplianceCode": "COMPLY01",
-            "cadrCustomerRequestDate": "2024-09-30",
-            "cadrLastMaintenanceTms": "2024-10-01T09:15:30",
-            "load_ts": "2024-10-01T10:00:00",
-            "chadrISOcountryCode": "US"
-        }
-    }
+@Entity
+@Table(name = "credit_card_customers")
+public class CreditCardCustomer {
+
+    @Id
+    @Column(name = "customer_id")
+    private Long customerId;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "embossing_name")
+    private String embossingName;
+
+    @Column(name = "middle_name")
+    private String middleName;
+
+    @Column(name = "suffix")
+    private String suffix;
+
+    @Column(name = "residential_country_code")
+    private String residentialCountryCode;
+
+    @Column(name = "last_4_ssn")
+    private String last4Ssn;
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
+    @Column(name = "deceased_date")
+    private LocalDate deceasedDate;
+
+    @Column(name = "language_preferred_code")
+    private String languagePreferredCode;
+
+    @Column(name = "is_language_affirmed")
+    private Boolean isLanguageAffirmed;
+
+    @Column(name = "language_affirm_date")
+    private LocalDate languageAffirmDate;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    @Column(name = "updated_date")
+    private LocalDateTime updatedDate;
+
+    // Getters and Setters
 }
 
+@Embeddable
+public class CreditCardCustomerEmailId implements Serializable {
+
+    @Column(name = "customer_id")
+    private Long customerId;
+
+    @Column(name = "email_id")
+    private Long emailId;
+
+    // Getters, Setters, equals(), and hashCode() methods
+}
+
+
+@OneToMany(mappedBy = "customer")
+private List<CreditCardCustomerEmail> emails;
+
+@ManyToOne
+@JoinColumn(name = "customer_id", insertable = false, updatable = false)
+private CreditCardCustomer customer;
+
+@Entity
+@Table(name = "credit_card_customers")
+public class CreditCardCustomer {
+
+    @Id
+    @Column(name = "customer_id")
+    private Long customerId;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "embossing_name")
+    private String embossingName;
+
+    @Column(name = "middle_name")
+    private String middleName;
+
+    @Column(name = "suffix")
+    private String suffix;
+
+    @Column(name = "residential_country_code")
+    private String residentialCountryCode;
+
+    @Column(name = "last_4_ssn")
+    private String last4Ssn;
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
+    @Column(name = "deceased_date")
+    private LocalDate deceasedDate;
+
+    @Column(name = "language_preferred_code")
+    private String languagePreferredCode;
+
+    @Column(name = "is_language_affirmed")
+    private Boolean isLanguageAffirmed;
+
+    @Column(name = "language_affirm_date")
+    private LocalDate languageAffirmDate;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    @Column(name = "updated_date")
+    private LocalDateTime updatedDate;
+
+    // Getters and Setters
+}
 
 
