@@ -223,5 +223,32 @@ public class CreditCardCustomerEmail {
     // Getters and Setters
 }
 
+@Component
+public class CardHolderEmailMapper {
+
+    public CreditCardCustomerEmailEntity toEntity(CardHolderEmailAddressDetails details) {
+        CreditCardCustomerEmailEntity entity = new CreditCardCustomerEmailEntity();
+
+        // Setting the composite key (customer_id and email_id)
+        CreditCardCustomerEmailId emailId = new CreditCardCustomerEmailId();
+        emailId.setCustomerId(Long.valueOf(details.getChitl()));  // Map chitl to customerId
+        emailId.setEmailId(Long.valueOf(details.getChemailAddr())); // Map email address to emailId
+        entity.setId(emailId);
+
+        // Map other fields
+        entity.setEmailAddress(details.getChemailAddr());
+        entity.setIsPreferred("Y".equalsIgnoreCase(details.getChemailPrfdFlg())); // Assuming it's a Y/N flag
+        entity.setEmailSequenceNumber(Integer.valueOf(details.getChemailSeqNbr()));
+        entity.setLastMaintainTimestamp(LocalDateTime.parse(details.getTms5())); // Assuming tms5 is a timestamp string
+        
+        // Set other fields such as created/updated dates as needed
+        entity.setCreatedDate(LocalDateTime.now());  // Example
+        entity.setUpdatedDate(LocalDateTime.now());  // Example
+        
+        return entity;
+    }
+}
+
+
 
 
