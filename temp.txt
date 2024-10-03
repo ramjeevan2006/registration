@@ -189,4 +189,39 @@ public class CreditCardCustomer {
     // Getters and Setters
 }
 
+@Entity
+@Table(name = "credit_card_customer_email_by_customer_id")
+public class CreditCardCustomerEmail {
+
+    @EmbeddedId
+    private CreditCardCustomerEmailId id;
+
+    @Column(name = "email_address")
+    private String emailAddress;
+
+    @Column(name = "last_maintain_timestamp")
+    private LocalDateTime lastMaintainTimestamp;
+
+    @Column(name = "is_preferred")
+    private Boolean isPreferred;
+
+    @Column(name = "email_sequence_number")
+    private Integer emailSequenceNumber;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    @Column(name = "updated_date")
+    private LocalDateTime updatedDate;
+
+    // Getters and Setters
+}
+
+
 
