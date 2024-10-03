@@ -249,6 +249,45 @@ public class CardHolderEmailMapper {
     }
 }
 
+INSERT INTO credit_card_customers (
+    customer_id, 
+    first_name, 
+    last_name, 
+    embossing_name, 
+    middle_name, 
+    suffix, 
+    residential_country_code, 
+    last_4_ssn, 
+    birth_date, 
+    deceased_date, 
+    language_preferred_code, 
+    is_language_affirmed, 
+    language_affirm_date, 
+    created_by, 
+    created_date, 
+    updated_by, 
+    updated_date
+) VALUES (
+    1001, 
+    'John', 
+    'Doe', 
+    'J.DOE', 
+    'Michael', 
+    'Sr', 
+    'US', 
+    '1234', 
+    '1980-05-15', 
+    NULL, 
+    'EN', 
+    TRUE, 
+    '2023-01-01', 
+    'admin', 
+    NOW(), 
+    'admin', 
+    NOW()
+);
+
+
 
 
 
