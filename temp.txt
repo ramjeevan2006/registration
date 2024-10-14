@@ -287,7 +287,13 @@ INSERT INTO credit_card_customers (
     NOW()
 );
 
-
+INSERT INTO SECURITY (cusip, ticker, strategy_source, as_of_date, shares_quantity, shares_outstanding, market_value) 
+VALUES 
+('123456789', 'AAPL', 'Long-term', '2024-10-14', 1000, 5000000, 1500000000),
+('987654321', 'MSFT', 'Growth', '2024-10-14', 1500, 7500000, 2300000000),
+('456123789', 'GOOGL', 'Value', '2024-10-14', 800, 3000000, 1000000000),
+('321654987', 'TSLA', 'Momentum', '2024-10-14', 500, 2000000, 900000000),
+('789456123', 'AMZN', 'Income', '2024-10-14', 1200, 6000000, 1800000000);
 
 
 
