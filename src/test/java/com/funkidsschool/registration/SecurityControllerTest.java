@@ -7,12 +7,22 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import com.samda.controller.SecurityController;
-import com.samda.service.SecurityService;
+import com.samda.service.SecuritiesService;
+import com.samda.util.AuthenticationUtility;
+import com.samda.headers.SchwabHeaders;
+
+import java.util.List;
 
 public class SecurityControllerTest {
 
     @Mock
-    private SecurityService securityService;
+    private SecuritiesService securitiesService;
+
+    @Mock
+    private AuthenticationUtility authenticationUtility;
+
+    @Mock
+    private SchwabHeaders schwabHeaders;
 
     @InjectMocks
     private SecurityController securityController;
@@ -25,13 +35,15 @@ public class SecurityControllerTest {
     @Test
     void testGetAllSecurities() {
         // Arrange
-        when(securityService.getAllSecurities()).thenReturn(mock(List.class));
+        when(authenticationUtility.authorize(schwabHeaders, "poc")).thenReturn(true);
+        when(securitiesService.getAllSecurities()).thenReturn(mock(List.class));
 
         // Act
-        ResponseEntity<List> result = securityController.getAllSecurities();
+        ResponseEntity<List<Security>> result = securityController.getAllSecurities();
 
         // Assert
         assertNotNull(result);
-        verify(securityService, times(1)).getAllSecurities();
+        assertEquals(200, result.getStatusCodeValue());
+        verify(securitiesService, times(1)).getAllSecurities();
     }
 }
