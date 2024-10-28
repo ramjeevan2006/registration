@@ -330,4 +330,13 @@ IF(D3<>"", "TO_TIMESTAMP('" & D3 & "', 'YYYY-MM-DD HH24:MI:SS')", "NULL") & ", "
 IF(E3<>"", "'" & E3 & "'", "NULL") & ", " &
 IF(F3<>"", "TO_TIMESTAMP('" & F3 & "', 'YYYY-MM-DD HH24:MI:SS')", "NULL") & ");"
 
-
+="INSERT INTO public.credit_card_amp_policy (policy_id, access_role_id, policy_name, policy_description, policy_abbreviation, created_by, created_tms, updated_by, updated_tms) VALUES (" &
+IF(A3<>"", "'" & A3 & "'", "NULL") & ", " &
+IF(B3<>"", "'" & B3 & "'", "NULL") & ", " &
+IF(C3<>"", "'" & C3 & "'", "NULL") & ", " &
+IF(D3<>"", "'" & D3 & "'", "NULL") & ", " &
+IF(E3<>"", "'" & E3 & "'", "NULL") & ", " &
+IF(F3<>"", "'" & F3 & "'", "NULL") & ", " &
+IF(G3<>"", "TO_TIMESTAMP('" & G3 & "', 'YYYY-MM-DD HH24:MI:SS')", "NULL") & ", " &
+IF(H3<>"", "'" & H3 & "'", "NULL") & ", " &
+IF(I3<>"", "TO_TIMESTAMP('" & I3 & "', 'YYYY-MM-DD HH24:MI:SS')", "NULL") & ");"
