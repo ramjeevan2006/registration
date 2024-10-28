@@ -323,11 +323,11 @@ IF(H3<>"", "TO_TIMESTAMP('" & H3 & "', 'YYYY-MM-DD HH24:MI:SS')", "NULL") & ");"
 
 
 ="INSERT INTO public.credit_card_amp_accessrole_entitlement (role_id, entitlement_id, created_by, created_tms, updated_by, updated_tms) VALUES (" &
-IF(A2<>"", "'" & A2 & "'", "NULL") & ", " &
-IF(B2<>"", "'" & B2 & "'", "NULL") & ", " &
-IF(C2<>"", "'" & C2 & "'", "NULL") & ", " &
-IF(D2<>"", "TO_TIMESTAMP('" & D2 & "', 'YYYY-MM-DD HH24:MI:SS')", "NULL") & ", " &
-IF(E2<>"", "'" & E2 & "'", "NULL") & ", " &
-IF(F2<>"", "TO_TIMESTAMP('" & F2 & "', 'YYYY-MM-DD HH24:MI:SS')", "NULL") & ");"
+IF(A3<>"", "'" & A3 & "'", "NULL") & ", " &
+IF(B3<>"", "'" & B3 & "'", "NULL") & ", " &
+IF(C3<>"", "'" & C3 & "'", "NULL") & ", " &
+IF(D3<>"", "TO_TIMESTAMP('" & D3 & "', 'YYYY-MM-DD HH24:MI:SS')", "NULL") & ", " &
+IF(E3<>"", "'" & E3 & "'", "NULL") & ", " &
+IF(F3<>"", "TO_TIMESTAMP('" & F3 & "', 'YYYY-MM-DD HH24:MI:SS')", "NULL") & ");"
 
 
