@@ -297,3 +297,18 @@ VALUES
 
 
 
+="INSERT INTO public.credit_card_amp_entitlement (entitlement_id, channel_entitlement_id, entitlement_name, entitlement_description, channel_name, request_type, created_by, created_tms, updated_by, updated_tms) VALUES (" &
+IF(A3<>"", "'" & A3 & "'", "NULL") & ", " &
+IF(B3<>"", "'" & B3 & "'", "NULL") & ", " &
+IF(C3<>"", "'" & C3 & "'", "NULL") & ", " &
+IF(D3<>"", "'" & D3 & "'", "NULL") & ", " &
+IF(E3<>"", "'" & E3 & "'", "NULL") & ", " &
+IF(F3<>"", "'" & F3 & "'", "NULL") & ", " &
+IF(G3<>"", "'" & G3 & "'", "NULL") & ", " &
+IF(H3<>"", "'" & H3 & "'", "NULL") & ", " &
+IF(I3<>"", "'" & I3 & "'", "NULL") & ", " &
+IF(J3<>"", "'" & J3 & "'", "NULL") & ");"
+
+
+
+
