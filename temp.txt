@@ -351,3 +351,28 @@ IF(C3<>"", "'" & C3 & "'", "NULL") & ", " &
 IF(D3<>"", "TO_TIMESTAMP('" & D3 & "', 'YYYY-MM-DD HH24:MI:SS')", "NULL") & ", " &
 IF(E3<>"", "'" & E3 & "'", "NULL") & ", " &
 IF(F3<>"", "TO_TIMESTAMP('" & F3 & "', 'YYYY-MM-DD HH24:MI:SS')", "NULL") & ");"
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter</artifactId>
+    <exclusions>
+        <exclusion>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+    <exclusions>
+        <exclusion>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
