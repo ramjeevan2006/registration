@@ -376,3 +376,8 @@ IF(F3<>"", "TO_TIMESTAMP('" & F3 & "', 'YYYY-MM-DD HH24:MI:SS')", "NULL") & ");"
         </exclusion>
     </exclusions>
 </dependency>
+
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-slf4j-impl</artifactId>
+</dependency>
