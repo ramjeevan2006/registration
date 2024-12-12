@@ -423,3 +423,56 @@ WHERE (account_id, customer_id) NOT IN (
     FROM account_customer_relation_table
 );
 
+
+
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+public Mono<Void> filter(ServerWebExchange webExchange, WebFilterChain filterChain) {
+    ServerHttpRequest originalRequest = webExchange.getRequest();
+    URI originalUri = originalRequest.getURI();
+    
+    String xAuthorization = originalRequest.getHeaders().getFirst("X-Authorization");
+    URI modifiedUri = xAuthorization != null ? URI.create(originalUri.toString() + "s") : originalUri;
+
+    ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(originalRequest) {
+        @Override
+        public URI getURI() {
+            return modifiedUri;
+        }
+
+        @Override
+        public HttpHeaders getHeaders() {
+            HttpHeaders headers = new HttpHeaders();
+            headers.putAll(super.getHeaders());
+            if (xAuthorization != null) {
+                headers.remove("X-Authorization");
+                headers.add("Authorization", "Modified " + xAuthorization);
+            }
+            return headers;
+        }
+    };
+
+    return filterChain.filter(webExchange.mutate().request(mutatedRequest).build());
+}
+
+
+
+import org.springframework.security.web.server.firewall.ServerHttpSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+
+@EnableWebFluxSecurity
+public class SecurityConfig {
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        http.csrf().disable()
+            .authorizeExchange()
+            .anyExchange().permitAll()
+            .and()
+            .httpFirewall(firewall -> firewall.allowedHeaderNames(header -> true)); // Allows custom headers
+        return http.build();
+    }
+}
+
+
