@@ -476,3 +476,84 @@ public class SecurityConfig {
 }
 
 
+public class ServerHttpRequestPreProcessorFilter implements WebFilter {
+
+    private final WebFlowHandler webFlowHandler;
+    private static final Logger LOG = LoggerFactory.getLogger(ServerHttpRequestPreProcessorFilter.class);
+
+    public ServerHttpRequestPreProcessorFilter(WebFlowHandler webFlowHandler) {
+        this.webFlowHandler = webFlowHandler;
+    }
+
+    @Override
+    public Mono<Void> filter(ServerWebExchange webExchange, WebFilterChain filterChain) {
+        try {
+            long startTS = System.currentTimeMillis();
+            URI uri = webExchange.getRequest().getURI();
+            String xAuthorization = webExchange.getRequest().getHeaders().getFirst(MutableHttpHeaders.X_AUTHORIZATION);
+
+            AtomicReference<ServerHttpRequest> atomic = new AtomicReference<>(webExchange.getRequest());
+
+            // BEFORE FIX: Directly mutating the request headers and URI
+            /*
+            if (uri.toASCIIString().endsWith("/graphql")) {
+                atomic.set(webExchange.getRequest().mutate()
+                        .uri(URI.create(uri.toASCIIString() + "s"))
+                        .headers(header -> {
+                            header.remove(MutableHttpHeaders.X_AUTHORIZATION);
+                            header.add(MutableHttpHeaders.AUTHORIZATION, "Modified " + xAuthorization);
+                        }).build());
+            }
+            */
+
+            // AFTER FIX: Using ServerHttpRequestDecorator for header and URI mutation
+            if (uri.toASCIIString().endsWith("/graphql")) {
+                URI modifiedUri = URI.create(uri.toASCIIString() + "s");
+                atomic.set(new ServerHttpRequestDecorator(webExchange.getRequest()) {
+                    @Override
+                    public URI getURI() {
+                        return modifiedUri;
+                    }
+
+                    @Override
+                    public HttpHeaders getHeaders() {
+                        HttpHeaders headers = new HttpHeaders();
+                        headers.putAll(super.getHeaders());
+                        if (xAuthorization != null) {
+                            headers.remove(MutableHttpHeaders.X_AUTHORIZATION);
+                            headers.add(MutableHttpHeaders.AUTHORIZATION, "Modified " + xAuthorization);
+                        }
+                        return headers;
+                    }
+                });
+            }
+
+            // Continue with the (possibly) mutated request
+            return Mono.just(webExchange).flatMap((webExchange0) -> {
+                WebFluxServerHttpRequest webFluxServerHttpRequest = atomic.get() != null
+                        ? new WebFluxServerHttpRequest(atomic.get()).build()
+                        : null;
+                ServerWebExchange mutatedWebExchange = webExchange.mutate().request(webFluxServerHttpRequest).build();
+                TrustedClient trustedClient = TrustedClient.with(clientId: "ANONYMOUS_USER", scope: null, authorities: null).build();
+                initContextThreadLocalAccessor();
+                return Mono.defer(() -> filterChain.filter(mutatedWebExchange))
+                        .doFinally(signal -> {
+                            long executionTS = System.currentTimeMillis() - startTS;
+                            LOG.info("HTTP {} request at: {}, processed successfully. ExecutionTS: {}ms", 
+                                    webFluxServerHttpRequest.getMethod().toString().toLowerCase(), executionTS);
+                        });
+            });
+
+        } catch (Exception ex) {
+            LOG.error("Exception in processing request: ", ex);
+            return Mono.error(ex);
+        }
+    }
+
+    private void initContextThreadLocalAccessor() {
+        // Your existing thread-local initialization logic here
+    }
+}
+
+
+
