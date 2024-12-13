@@ -556,4 +556,16 @@ public class ServerHttpRequestPreProcessorFilter implements WebFilter {
 }
 
 
+# Enable GCP Secret Manager
+spring.cloud.gcp.secretmanager.enabled=true
+
+# Specify your GCP Project ID (replace with your actual project ID)
+spring.cloud.gcp.project-id=your-project-id
+
+# Reference secrets using the sm:// prefix
+spring.datasource.private-key=${sm://private-key}
+spring.datasource.passphrase=${sm://private-key-passphrase}
+
+
+
 
