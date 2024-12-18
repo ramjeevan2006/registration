@@ -573,3 +573,14 @@ gcloud secrets versions access latest \
   --project=
 
 gcloud projects get-iam-policy cs-wa
+
+gcloud projects add-iam-policy-binding cs-wa \
+  --member="user:<YOUR_EMAIL>" \
+  --role="roles/secretmanager.secretAccessor"
+gcloud services enable secretmanager.googleapis.com --project=cs-w
+
+echo %GOOGLE_APPLICATION_CREDENTIALS%
+
+
+
+
