@@ -581,7 +581,7 @@ gcloud services enable secretmanager.googleapis.com --project=cs-w
 
 echo %GOOGLE_APPLICATION_CREDENTIALS%
 
-gcloud services enable secretmanager.googleapis.com --project=cs-wam-ad00008117-sbx556x
+gcloud services enable secretmanager.googleapis.com --project=cs-
 
 
 
