@@ -566,6 +566,10 @@ spring.cloud.gcp.project-id=your-project-id
 spring.datasource.private-key=${sm://private-key}
 spring.datasource.passphrase=${sm://private-key-passphrase}
 
+gcloud auth application-default print-access-token
 
+gcloud secrets versions access latest \
+  --secret=samna-snowflake-admin-bamboo-user-auth-passphrase \
+  --project=
 
-
+gcloud projects get-iam-policy cs-wa
