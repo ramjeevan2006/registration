@@ -1,4 +1,18 @@
-
+<dependency>
+    <groupId>io.grpc</groupId>
+    <artifactId>grpc-netty-shaded</artifactId>
+    <version>1.56.0</version> <!-- Use a compatible version -->
+</dependency>
+<dependency>
+    <groupId>io.grpc</groupId>
+    <artifactId>grpc-okhttp</artifactId>
+    <version>1.56.0</version> <!-- Use a compatible version -->
+</dependency>
+<dependency>
+    <groupId>com.google.cloud</groupId>
+    <artifactId>google-cloud-secretmanager</artifactId>
+    <version>2.22.0</version> <!-- Ensure a compatible version -->
+</dependency>
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.AccessSecretVersionRequest;
 
