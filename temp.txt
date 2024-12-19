@@ -1,3 +1,28 @@
+
+import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
+import com.google.cloud.secretmanager.v1.AccessSecretVersionRequest;
+
+@RestController
+public class SecretController {
+
+    @GetMapping("/fetch-secret")
+    public String fetchSecret() {
+        String projectId = "cs";
+        String secretId = "";
+        String versionId = "latest"; // Or specify a version number
+
+        try (SecretManagerServiceClient client = SecretManagerServiceClient.create()) {
+            AccessSecretVersionRequest request = AccessSecretVersionRequest.newBuilder()
+                    .setName(String.format("projects/%s/secrets/%s/versions/%s", projectId, secretId, versionId))
+                    .build();
+            return client.accessSecretVersion(request).getPayload().getData().toStringUtf8();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error fetching secret: " + e.getMessage();
+        }
+    }
+}
+
 logging:
   level:
     org.springframework.cloud.gcp: DEBUG
