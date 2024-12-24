@@ -1,4 +1,4 @@
-
+openssl rsa -in creds_private_key.txt -out decrypted_private_key.txt -passin file:creds_passphrase.txt
 <dependencyManagement>
     <dependencies>
         <dependency>
