@@ -1,4 +1,41 @@
+package com.example.util;
 
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
+import org.bouncycastle.operator.InputDecryptorProvider;
+import org.bouncycastle.operator.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
+
+import java.io.StringReader;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
+
+public class PrivateKeyDecryptionService {
+
+    public String decryptPrivateKey(String encryptedPrivateKey, String passphrase) throws Exception {
+        // Parse the private key
+        PEMParser pemParser = new PEMParser(new StringReader(encryptedPrivateKey));
+        Object object = pemParser.readObject();
+        pemParser.close();
+
+        // Decrypt the private key
+        JceOpenSSLPKCS8DecryptorProviderBuilder decryptorBuilder = 
+            new JceOpenSSLPKCS8DecryptorProviderBuilder();
+        decryptorBuilder.setProvider("BC");
+        InputDecryptorProvider decryptorProvider = decryptorBuilder.build(passphrase.toCharArray());
+        PKCS8EncodedKeySpec keySpec = (PKCS8EncodedKeySpec) ((org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo) object)
+                .decryptPrivateKeyInfo(decryptorProvider);
+
+        // Convert to Java's PrivateKey
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
+
+        // Base64 encode the decrypted key
+        return Base64.getEncoder().encodeToString(privateKey.getEncoded());
+    }
+}
 <dependency>
     <groupId>org.bouncycastle</groupId>
     <artifactId>bcprov-jdk18on</artifactId>
