@@ -1,4 +1,11 @@
 
+static {
+    if (Security.getProvider("BC") == null) {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+}
+
+
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
