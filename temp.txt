@@ -1,4 +1,57 @@
 
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
+import org.bouncycastle.pkcs.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
+import org.bouncycastle.operator.InputDecryptorProvider;
+
+import java.io.StringReader;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.util.Base64;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+public class PrivateKeyDecryption {
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
+    public static void main(String[] args) throws Exception {
+        String encryptedKey = "-----BEGIN ENCRYPTED PRIVATE KEY-----\n"
+                + "MIIFLTBXAQBg...<your-encrypted-key>...-----END ENCRYPTED PRIVATE KEY-----";
+        String passphrase = "your-passphrase";
+
+        String decryptedKey = decryptPrivateKey(encryptedKey, passphrase);
+        System.out.println("Decrypted Key:\n" + decryptedKey);
+    }
+
+    public static String decryptPrivateKey(String encryptedKey, String passphrase) throws Exception {
+        PEMParser pemParser = new PEMParser(new StringReader(encryptedKey));
+        Object object = pemParser.readObject();
+
+        if (object instanceof PKCS8EncryptedPrivateKeyInfo) {
+            PKCS8EncryptedPrivateKeyInfo encryptedPrivateKeyInfo = (PKCS8EncryptedPrivateKeyInfo) object;
+
+            InputDecryptorProvider decryptorProvider = new JceOpenSSLPKCS8DecryptorProviderBuilder()
+                    .setProvider("BC")
+                    .build(passphrase.toCharArray());
+
+            PrivateKey privateKey = new JcaPEMKeyConverter()
+                    .setProvider("BC")
+                    .getPrivateKey(encryptedPrivateKeyInfo.decryptPrivateKeyInfo(decryptorProvider));
+
+            return Base64.getEncoder().encodeToString(privateKey.getEncoded());
+        } else {
+            throw new IllegalArgumentException("Invalid private key format.");
+        }
+    }
+}
+
+
+
+
 package com.example.gcpbouncycastle;
 
 import org.springframework.boot.CommandLineRunner;
