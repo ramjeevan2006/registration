@@ -1,4 +1,63 @@
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
+import org.bouncycastle.operator.InputDecryptorProvider;
+import java.io.StringReader;
+import java.util.Base64;
 
+public class PrivateKeyDecryptionService {
+
+    static {
+        // Add BouncyCastle as a security provider
+        if (java.security.Security.getProvider("BC") == null) {
+            java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        }
+    }
+
+    /**
+     * Decrypts an encrypted private key using a passphrase and ensures the output is in PEM format.
+     *
+     * @param encryptedKey PEM-encoded encrypted private key
+     * @param passphrase   Passphrase for decryption
+     * @return Decrypted private key in PEM format
+     * @throws Exception If decryption fails
+     */
+    public static String decryptPrivateKey(String encryptedKey, String passphrase) throws Exception {
+        PEMParser pemParser = new PEMParser(new StringReader(encryptedKey));
+        Object object = pemParser.readObject();
+
+        if (object instanceof org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo) {
+            org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo pkcs8EncryptedPrivateKeyInfo = (org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo) object;
+
+            // Decrypt the private key using the passphrase
+            JceOpenSSLPKCS8DecryptorProviderBuilder decryptorBuilder = new JceOpenSSLPKCS8DecryptorProviderBuilder().setProvider("BC");
+            InputDecryptorProvider decryptorProvider = decryptorBuilder.build(passphrase.toCharArray());
+
+            byte[] decryptedKeyBytes = pkcs8EncryptedPrivateKeyInfo.decryptPrivateKeyInfo(decryptorProvider).getEncoded();
+
+            // Encode the decrypted key bytes to Base64
+            String base64DecryptedKey = Base64.getEncoder().encodeToString(decryptedKeyBytes);
+
+            // Add PEM headers and footers
+            StringBuilder pemKey = new StringBuilder();
+            pemKey.append("-----BEGIN PRIVATE KEY-----\n");
+            pemKey.append(base64DecryptedKey.replaceAll("(.{64})", "$1\n")); // Wrap lines at 64 characters
+            pemKey.append("\n-----END PRIVATE KEY-----");
+
+            return pemKey.toString();
+        } else {
+            throw new IllegalArgumentException("Unsupported private key format.");
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        String encryptedKey = "-----BEGIN ENCRYPTED PRIVATE KEY-----\n<your encrypted key here>\n-----END ENCRYPTED PRIVATE KEY-----";
+        String passphrase = "<your passphrase>";
+
+        String decryptedKey = decryptPrivateKey(encryptedKey, passphrase);
+        System.out.println("Decrypted Private Key:");
+        System.out.println(decryptedKey);
+    }
+}
 static {
     if (Security.getProvider("BC") == null) {
         Security.addProvider(new BouncyCastleProvider());
